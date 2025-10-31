@@ -2,7 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/LibraryManagement.API/LibraryManagement.API.csproj" Id="537db664-5ed5-453a-9980-c4a3d87cc359" />
     <Project Path="src/LibraryManagement.Application/LibraryManagement.Application.csproj" Id="7b7b17c9-d296-47f0-b73a-9e9824450e1e" />
-    <Project Path="src/LibraryManagement.Domein/LibraryManagement.Domain.csproj" Id="e972614f-672d-445c-a880-c307c1a08207" />
+    <Project Path="src/LibraryManagement.Domain/LibraryManagement.Domain.csproj" />
     <Project Path="src/LibraryManagement.Infrastructure/LibraryManagement.Infrastructure.csproj" Id="e1b4ee24-bd50-4014-b370-731197b9c55f" />
   </Folder>
 </Solution>
