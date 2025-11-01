@@ -19,34 +19,44 @@ namespace LibraryManagement.Application.Services.Books
 
         public async Task<IEnumerable<BookDto>> GetAllAsync()
         {
-            var books = await _bookRepository.GetAllAsync();
+            var books = await _bookRepository.GetAll()
+                .Include(b => b.Author)
+                .AsNoTracking()
+                .ToListAsync();
+
             return _mapper.Map<IEnumerable<BookDto>>(books);
         }
 
         public async Task<BookDto?> GetByIdAsync(int id)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
+            var book = await _bookRepository.GetAll()
+                .Include(b => b.Author)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(b => b.Id == id);
+
             return book == null ? null : _mapper.Map<BookDto>(book);
         }
 
-        public async Task CreateAsync(CreateBookDto createBookDto)
+        public async Task<BookDto> CreateAsync(CreateBookDto createBookDto)
         {
             var book = _mapper.Map<Book>(createBookDto);
             await _bookRepository.AddAsync(book);
+
+            return _mapper.Map<BookDto>(book);
         }
 
-        public async Task UpdateAsync(BookDto bookDto)
+        public async Task UpdateAsync(UpdateBookDto updateBookDto)
         {
             var entity = await _bookRepository.GetAll()
                 .AsNoTracking()
-                .AnyAsync(a => a.Id == bookDto.Id);
+                .AnyAsync(a => a.Id == updateBookDto.Id);
 
             if (!entity)
             {
-                throw new Exception($"Book with Id {bookDto.Id} not found.");
+                throw new Exception($"Book with Id {updateBookDto.Id} not found.");
             }
 
-            var book = _mapper.Map<Book>(bookDto);
+            var book = _mapper.Map<Book>(updateBookDto);
 
             await _bookRepository.UpdateAsync(book);
         }

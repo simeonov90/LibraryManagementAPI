@@ -25,28 +25,33 @@ namespace LibraryManagement.Application.Services.Authors
 
         public async Task<AuthorDto?> GetByIdAsync(int id)
         {
-            var author = await _authorRepository.GetByIdAsync(id);
+            var author = await _authorRepository.GetAll()
+                .Include(a => a.Books)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id == id);
             return author == null ? null : _mapper.Map<AuthorDto>(author);
         }
 
-        public async Task CreateAsync(CreateAuthorDto createAuthorDto)
+        public async Task<AuthorDto> CreateAsync(CreateAuthorDto createAuthorDto)
         {
             var author = _mapper.Map<Author>(createAuthorDto);
             await _authorRepository.AddAsync(author);
+
+            return _mapper.Map<AuthorDto>(author);
         }
 
-        public async Task UpdateAsync(AuthorDto authorDto)
+        public async Task UpdateAsync(UpdateAuthorDto updateAuthorDto)
         {
             var entity = await _authorRepository.GetAll()
                 .AsNoTracking()
-                .AnyAsync(a => a.Id == authorDto.Id);
+                .AnyAsync(a => a.Id == updateAuthorDto.Id);
 
             if (!entity)
             {
-                throw new Exception($"Author with Id {authorDto.Id} not found.");
+                throw new Exception($"Author with Id {updateAuthorDto.Id} not found.");
             }
 
-            var author = _mapper.Map<Author>(authorDto);
+            var author = _mapper.Map<Author>(updateAuthorDto);
 
             await _authorRepository.UpdateAsync(author);
         }
