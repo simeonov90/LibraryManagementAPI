@@ -11,9 +11,11 @@ namespace LibraryManagement.Application.Mapping
         {
             CreateMap<Author, AuthorDto>();
             CreateMap<CreateAuthorDto, Author>();
+            CreateMap<UpdateAuthorDto, Author>();
 
             CreateMap<Book, BookDto>();
             CreateMap<CreateBookDto, Book>();
+            CreateMap<UpdateBookDto, Book>();
         }
     }
 }
