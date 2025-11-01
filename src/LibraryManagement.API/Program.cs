@@ -1,14 +1,24 @@
+using LibraryManagement.Application.Mapping;
+using LibraryManagement.Application.Services.Authors;
+using LibraryManagement.Application.Services.Books;
+using LibraryManagement.Domain.IRepositories;
 using LibraryManagement.Infrastructure.Data;
+using LibraryManagement.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Add services to the container.
+builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
 
+builder.Services.AddTransient<AuthorService>();
+builder.Services.AddTransient<BookServices>();
+
+builder.Services.AddDbContext<LibraryDbContext>(opt => opt.UseSqlServer(connectionString));
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 builder.Services.AddControllers();
-
-builder.Services.AddDbContext<LibraryDbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
@@ -19,5 +29,12 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors(policy =>
+{
+    policy.AllowAnyOrigin()
+          .AllowAnyMethod()
+          .AllowAnyHeader();
+});
 
 app.Run();
