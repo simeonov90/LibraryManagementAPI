@@ -1,3 +1,4 @@
+using LibraryManagement.API.Middleware;
 using LibraryManagement.Application.Mapping;
 using LibraryManagement.Application.Services.Authors;
 using LibraryManagement.Application.Services.Books;
@@ -27,6 +28,8 @@ builder.Services.AddControllers()
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
