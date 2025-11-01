@@ -1,5 +1,4 @@
-﻿using LibraryManagement.Application.Services.Authors.Dtos;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace LibraryManagement.Application.Services.Books.Dtos
 {
