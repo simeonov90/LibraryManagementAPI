@@ -9,7 +9,13 @@ namespace LibraryManagement.Application.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<Author, AuthorDto>();
+            CreateMap<Author, AuthorDto>()
+            .ForMember(dest => dest.DateOfBirth,
+                opt => opt.MapFrom(src =>
+                    src.DateOfBirth.HasValue
+                        ? DateOnly.FromDateTime(src.DateOfBirth.Value)
+                        : (DateOnly?)null));
+
             CreateMap<CreateAuthorDto, Author>();
             CreateMap<UpdateAuthorDto, Author>();
 

@@ -1,3 +1,4 @@
+using LibraryManagement.API.Converters;
 using LibraryManagement.API.Middleware;
 using LibraryManagement.Application.Mapping;
 using LibraryManagement.Application.Services.Authors;
@@ -6,6 +7,7 @@ using LibraryManagement.Domain.IRepositories;
 using LibraryManagement.Infrastructure.Data;
 using LibraryManagement.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -22,7 +24,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
     });
 
 var app = builder.Build();

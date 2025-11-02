@@ -10,7 +10,7 @@ namespace LibraryManagement.Application.Services.Authors.Dtos
 
         public string LastName { get; set; } = string.Empty;
 
-        public DateTime? DateOfBirth { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
 
         public string? Country { get; set; }
 
