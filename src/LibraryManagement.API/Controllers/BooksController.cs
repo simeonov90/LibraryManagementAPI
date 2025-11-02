@@ -1,6 +1,7 @@
 ﻿using LibraryManagement.API.Extensions;
 using LibraryManagement.Application.Services.Books;
 using LibraryManagement.Application.Services.Books.Dtos;
+using LibraryManagement.Application.Services.Shared.Dtos;
 using LibraryManagement.Domain.Exceptions;
 using LibraryManagement.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -11,25 +12,24 @@ namespace LibraryManagement.API.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        private readonly BookServices _bookServices;
+        private readonly BookService _bookService;
 
-        public BooksController(BookServices bookServices)
+        public BooksController(BookService bookService)
         {
-            _bookServices = bookServices;
+            _bookService = bookService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks()
+        public async Task<ActionResult<PagedResultDto<BookDto>>> GetBooks([FromQuery] BookFilterDto filter)
         {
-            var books = await _bookServices.GetAllAsync();
-
-            return Ok(books);
+            var pagedBooks = await _bookService.GetPagedResultAsync(filter);
+            return Ok(pagedBooks);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<BookDto>> GetBook(int id)
         {
-            var book = await _bookServices.GetByIdAsync(id);
+            var book = await _bookService.GetByIdAsync(id);
 
             if (book == null)
             {
@@ -48,7 +48,7 @@ namespace LibraryManagement.API.Controllers
                 throw new ValidationException(errors);
             }
 
-            var book = await _bookServices.CreateAsync(createBookDto);
+            var book = await _bookService.CreateAsync(createBookDto);
 
             return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
         }
@@ -69,7 +69,7 @@ namespace LibraryManagement.API.Controllers
 
             try
             {
-                await _bookServices.UpdateAsync(updateBookDto);
+                await _bookService.UpdateAsync(updateBookDto);
             }
             catch (Exception ex)
             {
@@ -84,7 +84,7 @@ namespace LibraryManagement.API.Controllers
         {
             try
             {
-                await _bookServices.DeleteAsync(id);
+                await _bookService.DeleteAsync(id);
             }
             catch (Exception ex)
             {

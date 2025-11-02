@@ -17,7 +17,7 @@ builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 
 builder.Services.AddTransient<AuthorService>();
-builder.Services.AddTransient<BookServices>();
+builder.Services.AddTransient<BookService>();
 
 builder.Services.AddDbContext<LibraryDbContext>(opt => opt.UseSqlServer(connectionString));
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);

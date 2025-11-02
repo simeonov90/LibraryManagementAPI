@@ -1,20 +1,70 @@
 ﻿using AutoMapper;
+using LibraryManagement.Application.Services.Authors.Dtos;
 using LibraryManagement.Application.Services.Books.Dtos;
+using LibraryManagement.Application.Services.Shared.Dtos;
 using LibraryManagement.Domain.IRepositories;
 using LibraryManagement.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Application.Services.Books
 {
-    public class BookServices
+    public class BookService
     {
         private readonly IBookRepository _bookRepository;
         private readonly IMapper _mapper;
 
-        public BookServices(IBookRepository bookRepository, IMapper mapper)
+        public BookService(IBookRepository bookRepository, IMapper mapper)
         {
             _bookRepository = bookRepository;
             _mapper = mapper;
+        }
+
+        public async Task<PagedResultDto<BookDto>> GetPagedResultAsync(BookFilterDto filter)
+        {
+            var query = _bookRepository
+                .GetAll()
+                .Include(b => b.Author)
+                .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+            {
+                var term = filter.SearchTerm.ToLower();
+                query = query.Where(b =>
+                    b.Title.ToLower().Contains(term) ||
+                    b.Author.FirstName.ToLower().Contains(term) ||
+                    b.Author.LastName.ToLower().Contains(term));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var books = await query
+                .Skip((filter.Page - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .Select(b => new BookDto
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Year = b.Year,
+                    IsAvailable = b.IsAvailable,
+                    AuthorId = b.AuthorId,
+                    Author = new AuthorDto
+                    {
+                        Id = b.Author.Id,
+                        FirstName = b.Author.FirstName,
+                        LastName = b.Author.LastName,
+                        Country = b.Author.Country,
+                        DateOfBirth = b.Author.DateOfBirth.HasValue ? 
+                            DateOnly.FromDateTime(b.Author.DateOfBirth.Value) : 
+                            null,
+                    }
+                })
+                .ToListAsync();
+
+            return new PagedResultDto<BookDto>
+            {
+                TotalCount = totalCount,
+                Items = books
+            };
         }
 
         public async Task<IEnumerable<BookDto>> GetAllAsync()
