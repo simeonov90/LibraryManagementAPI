@@ -5,4 +5,7 @@
     <Project Path="src/LibraryManagement.Domain/LibraryManagement.Domain.csproj" />
     <Project Path="src/LibraryManagement.Infrastructure/LibraryManagement.Infrastructure.csproj" Id="e1b4ee24-bd50-4014-b370-731197b9c55f" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="src/LibraryManagement.Tests/LibraryManagement.Tests.csproj" Id="4c2e0a30-f30e-4a25-b99f-546ccf13441b" />
+  </Folder>
 </Solution>
