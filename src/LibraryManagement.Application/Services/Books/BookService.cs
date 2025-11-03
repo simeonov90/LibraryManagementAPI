@@ -35,6 +35,10 @@ namespace LibraryManagement.Application.Services.Books
                     b.Author.LastName.ToLower().Contains(term));
             }
 
+            query = filter.SortOrder.ToLower() == "asc"
+                ? query.OrderBy(b => b.Id)
+                : query.OrderByDescending(b => b.Id);
+
             var totalCount = await query.CountAsync();
 
             var books = await query
